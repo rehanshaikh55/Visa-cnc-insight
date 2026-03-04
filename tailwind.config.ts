@@ -18,6 +18,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+      },
       colors: {
         surface: "#f4f7fb",
         card: "#ffffff",

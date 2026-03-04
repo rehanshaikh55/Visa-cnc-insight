@@ -3,7 +3,7 @@
 import { useFleetStore } from '@/store/fleetStore';
 import { SmallMachineCard } from './SmallMachineCard';
 import { LargeMachineCard } from './LargeMachineCard';
-import { MachineSnapshot } from '@/store/fleetStore'; 
+import { MachineSnapshot } from '@/store/fleetStore';
 
 function PlaceholderCard({ id }: { id: string }) {
   return (
@@ -39,15 +39,14 @@ export function FactoryFloor() {
   const machines = useFleetStore((s) => s.machines);
 
   return (
-    <div className="flex w-full min-h-0 gap-5 p-5">
+    /* Mobile: single column stack. md+: side-by-side 50/50 */
+    <div className="flex flex-col md:flex-row w-full gap-4 p-3 sm:p-5">
 
-      {/* ── SECTION A (50%) ── */}
-      <div className="flex flex-col gap-3 w-1/2">
+      {/* ── SECTION A ── */}
+      <div className="flex flex-col gap-3 w-full md:w-1/2">
         <p className="text-xs font-bold text-text-secondary uppercase tracking-widest px-1">
           Section A
         </p>
-
-        {/* Small cards M-01..M-07 */}
         <Small id="01" machines={machines} />
         <Small id="02" machines={machines} />
         <Small id="03" machines={machines} />
@@ -55,30 +54,22 @@ export function FactoryFloor() {
         <Small id="05" machines={machines} />
         <Small id="06" machines={machines} />
         <Small id="07" machines={machines} />
-
-        {/* Large card M-08 */}
         <SectionDivider label="CNC-08" />
         <Large id="08" machines={machines} />
       </div>
 
-      {/* ── SECTION B (50%) ── */}
-      <div className="flex flex-col gap-3 w-1/2">
+      {/* ── SECTION B ── */}
+      <div className="flex flex-col gap-3 w-full md:w-1/2">
         <p className="text-xs font-bold text-text-secondary uppercase tracking-widest px-1">
           Section B
         </p>
-
-        {/* Group 1: M-13..M-16 */}
         <Large id="13" machines={machines} />
         <Large id="14" machines={machines} />
         <Large id="15" machines={machines} />
         <Large id="16" machines={machines} />
-
-        {/* Gap between groups */}
-        <div className="py-3">
+        <div className="py-2">
           <SectionDivider label="next line" />
         </div>
-
-        {/* Group 2: M-09..M-12 */}
         <Large id="09" machines={machines} />
         <Large id="10" machines={machines} />
         <Large id="11" machines={machines} />

@@ -65,10 +65,10 @@ function DetailContent({ id }: { id: string }) {
     <div className="flex flex-col min-h-screen bg-surface">
 
       {/* ── Top bar ── */}
-      <div className="flex items-center gap-4 px-6 py-3 shadow-md" style={{ backgroundColor: '#0a3d62' }}>
+      <div className="flex items-center gap-2 px-3 sm:px-6 py-3 shadow-md flex-wrap" style={{ backgroundColor: '#0a3d62' }}>
         <Link
           href="/"
-          className="flex items-center gap-1 text-white opacity-80 hover:opacity-100 text-sm transition-opacity"
+          className="flex items-center gap-1 text-white opacity-80 hover:opacity-100 text-sm transition-opacity flex-shrink-0"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <polyline points="15 18 9 12 15 6" />
@@ -76,17 +76,17 @@ function DetailContent({ id }: { id: string }) {
           Back
         </Link>
         <div className="h-4 w-px bg-white opacity-30" />
-        <span className="text-white font-bold">M-{id} — {machineType}</span>
-        {machine && <div className="ml-1"><StatusBadge state={machine.state} /></div>}
+        <span className="text-white font-bold text-sm sm:text-base truncate">M-{id} — {machineType}</span>
+        {machine && <div className="ml-1 flex-shrink-0"><StatusBadge state={machine.state} /></div>}
         <div className="flex-1" />
         {machine && (
-          <span className="text-white text-xs opacity-70">
+          <span className="text-white text-xs opacity-70 hidden sm:inline">
             Operator: <span className="font-semibold opacity-100">{machine.operator}</span>
           </span>
         )}
       </div>
 
-      <main className="flex-1 p-6 flex flex-col gap-5 max-w-6xl mx-auto w-full">
+      <main className="flex-1 p-3 sm:p-6 flex flex-col gap-4 sm:gap-5 max-w-6xl mx-auto w-full">
 
         {/* ── Machine info + stats ── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -149,16 +149,16 @@ function DetailContent({ id }: { id: string }) {
         </div>
 
         {/* ── Live Current Chart ── */}
-        <div className="bg-card rounded-lg border border-card-border shadow-sm p-5">
-          <div className="flex items-center justify-between mb-1">
-            <div>
+        <div className="bg-card rounded-lg border border-card-border shadow-sm p-3 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
+            <div className="min-w-0">
               <h2 className="text-sm font-bold text-text-primary">Live Current — Last 60 Seconds</h2>
-              <p className="text-xs text-text-secondary mt-0.5">
+              <p className="text-xs text-text-secondary mt-0.5 hidden sm:block">
                 X axis: time in seconds · Y axis: RMS current (A) · Dashed lines = state thresholds
               </p>
             </div>
             {machine && (
-              <div className="text-right">
+              <div className="text-right flex-shrink-0">
                 <div className="text-2xl font-bold tabular-nums" style={{ color: stateAccent }}>
                   {machine.rms.toFixed(2)} A
                 </div>
@@ -170,7 +170,7 @@ function DetailContent({ id }: { id: string }) {
         </div>
 
         {/* ── 7-day History ── */}
-        <div className="bg-card rounded-lg border border-card-border shadow-sm p-5">
+        <div className="bg-card rounded-lg border border-card-border shadow-sm p-3 sm:p-5">
           <h2 className="text-sm font-bold text-text-primary mb-0.5">Energy &amp; Cycles — Last 7 Days</h2>
           <p className="text-xs text-text-secondary mb-3">Daily energy consumption (kWh) and cycle count</p>
           <HistoryChart machineId={id} />
