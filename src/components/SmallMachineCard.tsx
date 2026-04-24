@@ -53,7 +53,7 @@ export function SmallMachineCard({ machine }: Props) {
           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs text-text-secondary">
             <span>Power: <span className="text-text-primary font-semibold">{machine.powerKw.toFixed(1)} kW</span></span>
             <span>Cost: <span className="text-text-primary font-semibold">{formatCost(machine.costToday)}</span></span>
-            <span>Uptime: <span className="text-text-primary font-semibold"><UptimeCounter uptimeSec={machine.uptimeSec} /></span></span>
+            <span>Uptime: <span className="text-text-primary font-semibold"><UptimeCounter uptimeSec={machine.uptimeSec} state={machine.state} /></span></span>
             <span>Cycles: <span className="text-text-primary font-semibold">{machine.cycleCount}</span></span>
           </div>
         </div>

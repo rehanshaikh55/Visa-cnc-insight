@@ -141,7 +141,7 @@ function DetailContent({ id }: { id: string }) {
             />
             <StatCard
               label="Uptime"
-              value={machine ? <UptimeCounter uptimeSec={machine.uptimeSec} /> : '—'}
+              value={machine ? <UptimeCounter uptimeSec={machine.uptimeSec} state={machine.state} /> : '—'}
               sub="HH : MM : SS"
               accent="#636e72"
             />

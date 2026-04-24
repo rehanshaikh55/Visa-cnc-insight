@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { formatUptime } from '@/lib/utils';
+import { formatUptime, MachineState } from '@/lib/utils';
 
 interface Props {
   uptimeSec: number;
+  state?: MachineState;
 }
 
-export function UptimeCounter({ uptimeSec }: Props) {
+export function UptimeCounter({ uptimeSec, state }: Props) {
   const [elapsed, setElapsed] = useState(uptimeSec);
 
   useEffect(() => {
@@ -15,9 +16,11 @@ export function UptimeCounter({ uptimeSec }: Props) {
   }, [uptimeSec]);
 
   useEffect(() => {
+    if (state === 'OFF') return;
     const id = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [state]);
 
-  return <span className="font-mono tabular-nums">{formatUptime(elapsed)}</span>;
+  const display = state === 'OFF' ? 0 : elapsed;
+  return <span className="font-mono tabular-nums">{formatUptime(display)}</span>;
 }

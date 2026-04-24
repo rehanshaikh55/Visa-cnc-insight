@@ -75,7 +75,7 @@ export function LargeMachineCard({ machine }: Props) {
           </div>
           <div>
             <div className="text-sm font-bold text-text-primary leading-tight font-mono tabular-nums">
-              <UptimeCounter uptimeSec={machine.uptimeSec} />
+              <UptimeCounter uptimeSec={machine.uptimeSec} state={machine.state} />
             </div>
             <div className="text-[10px] text-text-secondary">Uptime</div>
           </div>
