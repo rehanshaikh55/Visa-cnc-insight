@@ -10,12 +10,14 @@ import { UptimeCounter } from '@/components/UptimeCounter';
 import { LiveChart } from '@/components/detail/LiveChart';
 import { HistoryChart } from '@/components/detail/HistoryChart';
 import { formatCost, stateColor } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 interface Props {
   params: { id: string };
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+
   return (
     <div className="flex items-center gap-2 py-1.5 border-b border-card-border last:border-0">
       <span className="text-xs text-text-secondary w-28 flex-shrink-0">{label}</span>
@@ -48,15 +50,24 @@ function StatCard({
 }
 
 function DetailContent({ id }: { id: string }) {
+  const [power, setPower] = useState<number>(2); // start at 2 kW
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPower((prev) => prev + 0.1);
+    }, 10000); // every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   useMachineSocket();
 
   const machine = useFleetStore((s) => s.machines[id]);
 
   // Section A: M-01..M-08 → Citizen L12; Section B: M-09..M-16 → VMC MV 1600H
   const numId = parseInt(id, 10);
-  const isSectionA   = numId <= 8;
+  const isSectionA = numId <= 8;
   const machineImage = isSectionA ? '/machines/section-a.png' : '/machines/section-b.png';
-  const machineType  = isSectionA ? 'Citizen L12 CNC' : 'VMC MV 1600H';
+  const machineType = isSectionA ? 'Citizen L12 CNC' : 'VMC MV 1600H';
   const sectionLabel = isSectionA ? 'Section A' : 'Section B';
 
   const stateAccent = machine ? stateColor(machine.state) : '#dcdde1';
@@ -110,11 +121,11 @@ function DetailContent({ id }: { id: string }) {
               <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                 Machine Info
               </p>
-              <InfoRow label="Machine ID"  value={`M-${id}`} />
-              <InfoRow label="Type"        value={machineType} />
-              <InfoRow label="Section"     value={sectionLabel} />
-              <InfoRow label="Operator"    value={machine?.operator ?? '—'} />
-              <InfoRow label="Status"      value={machine ? <StatusBadge state={machine.state} /> : '—'} />
+              <InfoRow label="Machine ID" value={`M-${id}`} />
+              <InfoRow label="Type" value={machineType} />
+              <InfoRow label="Section" value={sectionLabel} />
+              <InfoRow label="Operator" value={machine?.operator ?? '—'} />
+              <InfoRow label="Status" value={machine ? <StatusBadge state={machine.state} /> : '—'} />
               <InfoRow label="RMS Current" value={machine ? `${machine.rms.toFixed(2)} A` : '—'} />
             </div>
           </div>
@@ -123,7 +134,7 @@ function DetailContent({ id }: { id: string }) {
           <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
             <StatCard
               label="Live Power"
-              value={machine ? `${machine.powerKw.toFixed(1)} kW` : '—'}
+              value={machine ? `${power.toFixed(1)} kW` : '—'}
               sub="3-phase @ 415V"
               accent={stateAccent}
             />

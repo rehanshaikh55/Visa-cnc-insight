@@ -19,20 +19,28 @@ interface Props {
 
 // Mock 7-day data for when API is unavailable
 function mockHistory(id: string) {
+  const energyData = [48, 37.5, 40, 23.65, 10, 16, 0.1];   // kWh (fixed)
+  const cyclesData = [80, 45, 120, 71, 18, 48, 2];   // cycles (fixed)
+  const costData = [520, 580, 540, 600, 640, 620, 660]; // INR (optional fixed)
+
   const days = [];
+
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
+
+    const index = 6 - i; // ensures correct mapping from oldest → newest
+
     days.push({
       date: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-      energyKwh: Math.random() * 80 + 20,
-      costInr: Math.random() * 600 + 100,
-      cycles: Math.floor(Math.random() * 50 + 5),
+      energyKwh: energyData[index],
+      costInr: costData[index],
+      cycles: cyclesData[index],
     });
   }
+
   return days;
 }
-
 export function HistoryChart({ machineId }: Props) {
   const { data, error } = useAggregates(machineId, 7);
   const isMock = process.env.NEXT_PUBLIC_MOCK === 'true';
@@ -40,11 +48,11 @@ export function HistoryChart({ machineId }: Props) {
   const chartData = isMock || error || !data
     ? mockHistory(machineId)
     : (data as any[]).map((row: any) => ({
-        date: new Date(row.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-        energyKwh: parseFloat(row.energy_kwh || 0),
-        costInr: parseFloat(row.cost_inr || 0),
-        cycles: parseInt(row.cycle_count || 0),
-      }));
+      date: new Date(row.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+      energyKwh: parseFloat(row.energy_kwh || 0),
+      costInr: parseFloat(row.cost_inr || 0),
+      cycles: parseInt(row.cycle_count || 0),
+    }));
 
   return (
     <ResponsiveContainer width="100%" height={220}>

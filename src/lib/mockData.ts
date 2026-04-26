@@ -9,7 +9,7 @@ const STATES = ['OFF', 'IDLE', 'OPERATING'] as const;
 const OPERATORS = ['Salman', 'Rohan'];
 
 // Only these machines start ON (OPERATING). All others are OFF.
-const ON_MACHINES = new Set(['01', '13']);
+const ON_MACHINES = new Set(['00', '00']);
 
 function initialState(id: string): (typeof STATES)[number] {
   return ON_MACHINES.has(id) ? 'OPERATING' : 'OFF';
@@ -22,29 +22,31 @@ const OPERATOR_MAP: Record<string, string> = Object.fromEntries(
 
 function randomRms(state: string): number {
   if (state === 'OFF') return 0;
-  if (state === 'IDLE') return 1.5 + Math.random() * 1.5;   // ~1.5–3 A
-  return 15 + Math.random() * 5;                             // ~15–20 A
+  if (state === 'IDLE') return 5 + Math.random() * 10;   // 5–15
+  return 10 + Math.random() * 40;                        // 10–50
 }
 
 // State-specific clamp so drift stays within a believable band
 function clampRms(state: string, rms: number): number {
   if (state === 'OFF') return 0;
-  if (state === 'IDLE') return Math.min(3.5, Math.max(0.8, rms));
-  return Math.min(22, Math.max(12, rms));
+  if (state === 'IDLE') return Math.min(20, Math.max(5, rms));
+  return Math.min(50, Math.max(10, rms));
 }
-
 function makeHistory(rms: number, state: string): { rms: number; ts: number }[] {
   const now = Date.now();
-  // Walk backward from `rms` with small ±0.2 A steps so past history is smooth
   const out: { rms: number; ts: number }[] = [];
   let v = rms;
+
   for (let i = 59; i >= 0; i--) {
     out.unshift({
       rms: state === 'OFF' ? 0 : v,
       ts: now - i * 1000,
     });
-    v = clampRms(state, v + (Math.random() - 0.5) * 0.4);
+
+    // smooth fluctuation
+    v = clampRms(state, v + (Math.random() - 0.5) * 4); // ±2
   }
+
   return out;
 }
 
@@ -80,9 +82,16 @@ export function tickMock(machines: Record<string, MachineSnapshot>): Record<stri
   for (const id of Object.keys(updated)) {
     const m = { ...updated[id] };
     // Gentle drift: ±0.2 A per second, clamped to the state's band
+    const target = 10 + Math.random() * 40; // random target between 10–50
+
     m.rms = m.state === 'OFF'
       ? 0
-      : clampRms(m.state, m.rms + (Math.random() - 0.5) * 0.4);
+      : clampRms(
+        m.state,
+        m.rms
+        + (target - m.rms) * 0.4      // pulls toward new value (big movement)
+        + (Math.random() - 0.5) * 6   // extra randomness
+      );
     m.powerKw = calcPower(m.rms);
     if (m.state !== 'OFF') {
       m.uptimeSec += 1;
